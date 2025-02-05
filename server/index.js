@@ -18,7 +18,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 
 // Root Route (Basic API Check)
-app.get("/", (res) => {
+app.get("/", (req, res) => {
   res.send("Finance Tracker API is running...");
 });
 
