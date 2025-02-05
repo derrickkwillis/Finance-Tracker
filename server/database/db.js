@@ -1,17 +1,20 @@
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+
 const { Pool } = require("pg");
-require("dotenv").config();
 
 if (!process.env.DATABASE_URL) {
-  throw new Error("❌ DATABASE_URL is not defined. Check your .env file.");
+  console.error("DATABASE_URL is not defined. Check your .env file.");
+  process.exit(1);
 }
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }, // Required for Render-hosted PostgreSQL
+  ssl: { rejectUnauthorized: false },
 });
 
 pool.on("connect", () => {
-  console.log("✅ Connected to PostgreSQL on Render");
+  console.log("Connected to PostgreSQL on Render");
 });
 
 module.exports = pool;
