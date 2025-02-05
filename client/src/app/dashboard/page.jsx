@@ -2,9 +2,15 @@
 
 import React, { useState } from "react";
 import styled from "styled-components";
+import AddTransactionModal from "@/components/AddTransactionComponent";
 
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isTransactionModalOpen, setTransactionModalOpen] = useState(false);
+
+  const handleAddTransactionClick = () => {
+    setTransactionModalOpen(true);
+  };
 
   return (
     <StyledWrapper>
@@ -37,11 +43,19 @@ const Dashboard = () => {
           +
         </button>
         <div className={`fab-options ${isOpen ? "open" : ""}`}>
-          <button className="fab-option">Add Transaction</button>
+          <button className="fab-option" onClick={handleAddTransactionClick}>
+            Add Transaction
+          </button>
           <button className="fab-option">Create New Savings Plan</button>
           <button className="fab-option">Logout</button>
         </div>
       </div>
+      {/* Add Transaction Modal */}
+      <AddTransactionModal
+        isOpen={isTransactionModalOpen}
+        onClose={() => setTransactionModalOpen(false)}
+        onSubmit={(data) => console.log("Transaction Added:", data)}
+      />
     </StyledWrapper>
   );
 };
@@ -161,6 +175,7 @@ const StyledWrapper = styled.div`
     position: absolute;
     bottom: 70px; /* Positioned above the FAB */
     right: 10px;
+    color: rgb(39, 78, 149);
   }
 
   /* Show options when FAB is open */
