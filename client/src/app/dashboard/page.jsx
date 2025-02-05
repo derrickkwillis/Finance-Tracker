@@ -14,7 +14,7 @@ const Dashboard = () => {
 
   return (
     <StyledWrapper>
-      <div className="overlay" /> {/* Faded background effect */}
+      <div className="overlay" />
       <div className="parent">
         <div className="div1">
           <h2>Recent Transactions</h2>
@@ -37,6 +37,7 @@ const Dashboard = () => {
           <p>Track savings from the last few months.</p>
         </div>
       </div>
+
       {/* Floating Action Button */}
       <div className="fab-container">
         <button className="fab" onClick={() => setIsOpen(!isOpen)}>
@@ -47,9 +48,10 @@ const Dashboard = () => {
             Add Transaction
           </button>
           <button className="fab-option">Create New Savings Plan</button>
-          <button className="fab-option">Logout</button>
+          <button className="fab-option logout-btn">Logout</button>
         </div>
       </div>
+
       {/* Add Transaction Modal */}
       <AddTransactionModal
         isOpen={isTransactionModalOpen}
@@ -70,7 +72,6 @@ const StyledWrapper = styled.div`
     rgba(207, 217, 223, 0.8),
     rgba(226, 235, 240, 0.8)
   );
-
   position: relative;
 
   .overlay {
@@ -132,7 +133,6 @@ const StyledWrapper = styled.div`
     font-size: 1rem;
   }
 
-  /* Floating Action Button (FAB) */
   .fab-container {
     position: fixed;
     bottom: 20px;
@@ -140,7 +140,7 @@ const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    z-index: 100; /* Ensures it stays above everything */
+    z-index: 100;
   }
 
   .fab {
@@ -164,7 +164,6 @@ const StyledWrapper = styled.div`
     background-color: rgb(39, 78, 149);
   }
 
-  /* Options - Initially Hidden */
   .fab-options {
     display: flex;
     flex-direction: column;
@@ -173,12 +172,11 @@ const StyledWrapper = styled.div`
     transform: translateY(20px);
     transition: opacity 0.3s ease, transform 0.3s ease;
     position: absolute;
-    bottom: 70px; /* Positioned above the FAB */
+    bottom: 70px;
     right: 10px;
     color: rgb(39, 78, 149);
   }
 
-  /* Show options when FAB is open */
   .fab-options.open {
     opacity: 1;
     transform: translateY(0);
@@ -193,14 +191,26 @@ const StyledWrapper = styled.div`
     cursor: pointer;
     font-size: 14px;
     transition: background 0.3s ease, color 0.3s ease;
-    width: auto; /* Adjust width based on content */
-    white-space: nowrap; /* Prevent text from wrapping */
-    min-width: 100px; /* Set a minimum width so small text buttons look uniform */
+    width: auto;
+    white-space: nowrap;
+    min-width: 100px;
   }
 
   .fab-option:hover {
     background: rgb(49, 98, 179);
     color: white;
+  }
+
+  .logout-btn {
+    background: red;
+    color: white;
+    border: 1px solid red;
+  }
+
+  .logout-btn:hover {
+    background: white;
+    color: red;
+    border: 1px solid red;
   }
 `;
 
