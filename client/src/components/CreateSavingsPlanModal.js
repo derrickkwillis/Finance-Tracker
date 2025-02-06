@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 
 const CreateSavingsPlanModal = ({ isOpen, onClose, onSubmit }) => {
@@ -8,44 +8,55 @@ const CreateSavingsPlanModal = ({ isOpen, onClose, onSubmit }) => {
     goalName: "",
     targetAmount: "",
     percentage: "",
-    interval: "monthly", // Default interval
+    interval: "monthly",
   });
+
+  const percentageInputRef = useRef(null);
 
   // Format amount input with commas
   const formatAmount = (value) => {
     const numericValue = value.replace(/[^0-9.]/g, "");
     const parts = numericValue.split(".");
-    if (parts.length > 2) return formData.targetAmount; // Prevent multiple decimal points
+    if (parts.length > 2) return formData.targetAmount;
     if (parts.length === 2 && parts[1].length > 2)
       parts[1] = parts[1].substring(0, 2);
     const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.length === 2 ? `${integerPart}.${parts[1]}` : integerPart;
   };
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const formatPercentage = (value) => {
+    let numericValue = value.replace(/[^0-9]/g, "");
 
-    if (name === "targetAmount") {
-      setFormData({ ...formData, targetAmount: formatAmount(value) });
-    } else if (name === "percentage") {
-      const percentValue = value.replace(/[^0-9]/g, ""); // Allow only numbers
-      if (
-        percentValue === "" ||
-        (Number(percentValue) >= 0 && Number(percentValue) <= 100)
-      ) {
-        setFormData({ ...formData, percentage: percentValue });
-      }
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    if (numericValue === "") return "";
+    let num = Number(numericValue);
+    if (num > 100) num = 100;
+
+    return `${num}`;
   };
 
-  // Handle form submission
+  const handlePercentageChange = (e) => {
+    const newValue = formatPercentage(e.target.value);
+    setFormData((prev) => ({ ...prev, percentage: newValue }));
+
+    setTimeout(() => {
+      if (percentageInputRef.current) {
+        percentageInputRef.current.setSelectionRange(
+          newValue.length,
+          newValue.length
+        );
+      }
+    }, 0);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const sanitizedAmount = parseFloat(formData.targetAmount.replace(/,/g, ""));
-    onSubmit({ ...formData, targetAmount: sanitizedAmount });
+    const sanitizedPercentage = parseFloat(formData.percentage); // Convert to number before submitting
+    onSubmit({
+      ...formData,
+      targetAmount: sanitizedAmount,
+      percentage: sanitizedPercentage,
+    });
     setFormData({
       goalName: "",
       targetAmount: "",
@@ -55,7 +66,7 @@ const CreateSavingsPlanModal = ({ isOpen, onClose, onSubmit }) => {
     onClose();
   };
 
-  if (!isOpen) return null; // Do not render if modal is closed
+  if (!isOpen) return null;
 
   return (
     <ModalOverlay>
@@ -66,7 +77,9 @@ const CreateSavingsPlanModal = ({ isOpen, onClose, onSubmit }) => {
             type="text"
             name="goalName"
             value={formData.goalName}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormData({ ...formData, goalName: e.target.value })
+            }
             required
           />
 
@@ -75,29 +88,39 @@ const CreateSavingsPlanModal = ({ isOpen, onClose, onSubmit }) => {
             type="text"
             name="targetAmount"
             value={formData.targetAmount}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                targetAmount: formatAmount(e.target.value),
+              })
+            }
             required
           />
 
           <label>Percentage of Balance</label>
-          <input
-            type="text"
-            name="percentage"
-            value={formData.percentage}
-            onChange={handleChange}
-            placeholder="%"
-            required
-          />
+          <div className="percent-input">
+            <input
+              type="text"
+              name="percentage"
+              value={formData.percentage}
+              onChange={handlePercentageChange}
+              ref={percentageInputRef}
+              required
+            />
+            <span>%</span>
+          </div>
 
           <label>Interval</label>
           <select
             name="interval"
             value={formData.interval}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormData({ ...formData, interval: e.target.value })
+            }
           >
             <option value="weekly">Weekly</option>
+            <option value="biweekly">Bi-Weekly</option>
             <option value="monthly">Monthly</option>
-            <option value="yearly">Yearly</option>
           </select>
 
           <button type="submit">Create Savings Plan</button>
@@ -110,7 +133,6 @@ const CreateSavingsPlanModal = ({ isOpen, onClose, onSubmit }) => {
   );
 };
 
-// Styled Components
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -148,6 +170,24 @@ const ModalContent = styled.div`
     border: 1px solid #ccc;
     border-radius: 5px;
     color: black;
+  }
+
+  .percent-input {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+
+  .percent-input input {
+    flex: 1;
+    padding-right: 20px;
+  }
+
+  .percent-input span {
+    position: absolute;
+    right: 10px;
+    color: black;
+    font-weight: bold;
   }
 
   button {
