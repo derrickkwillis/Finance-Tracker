@@ -3,13 +3,19 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import AddTransactionModal from "@/components/AddTransactionComponent";
+import CreateSavingsPlanModal from "@/components/CreateSavingsPlanModal";
 
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isTransactionModalOpen, setTransactionModalOpen] = useState(false);
+  const [isSavingsPlanModalOpen, setSavingsPlanModalOpen] = useState(false);
 
   const handleAddTransactionClick = () => {
     setTransactionModalOpen(true);
+  };
+
+  const handleSavingsPlanClick = () => {
+    setSavingsPlanModalOpen(true);
   };
 
   return (
@@ -37,7 +43,6 @@ const Dashboard = () => {
           <p>Track savings from the last few months.</p>
         </div>
       </div>
-
       {/* Floating Action Button */}
       <div className="fab-container">
         <button className="fab" onClick={() => setIsOpen(!isOpen)}>
@@ -47,17 +52,23 @@ const Dashboard = () => {
           <button className="fab-option" onClick={handleAddTransactionClick}>
             Add Transaction
           </button>
-          <button className="fab-option">Create New Savings Plan</button>
+          <button className="fab-option" onClick={handleSavingsPlanClick}>
+            Create New Savings Plan
+          </button>
           <button className="fab-option logout-btn">Logout</button>
         </div>
       </div>
-
-      {/* Add Transaction Modal */}
       <AddTransactionModal
         isOpen={isTransactionModalOpen}
         onClose={() => setTransactionModalOpen(false)}
         onSubmit={(data) => console.log("Transaction Added:", data)}
       />
+      <CreateSavingsPlanModal
+        isOpen={isSavingsPlanModalOpen}
+        onClose={() => setSavingsPlanModalOpen(false)}
+        onSubmit={(data) => console.log("Savings Plan Created:", data)}
+      />
+      ;
     </StyledWrapper>
   );
 };
